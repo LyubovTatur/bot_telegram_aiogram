@@ -20,15 +20,22 @@ db = SQLighter('db.db')
 
 # команда активации подписки
 
-@db.message_handler(commands=['subscribe'])
-async def subscribe(message: types.message):
-    if(not db.sub_exists(message.from_user.id, False)):
+@dp.message_handler(commands=['subscribe'])
+async def subscribe(message: types.Message):
+    if(not db.sub_exists(message.from_user.id)):
         db.add_sub(message.from_user.id)
     else:
         db.update_sub(message.from_user.id, True)
     await message.answer("Вы подписались.")
-# чтож эхо
 
+@dp.message_handler(commands=['unsubscribe'])
+async def unsubscribe(message: types.Message):
+    if(not db.sub_exists(message.from_user.id)):
+        db.add_sub(message.from_user.id, False)
+        await message.answer("Вы итак не подписаны.")
+    else:
+        db.update_sub(message.from_user.id, False)
+        await message.answer("Вы отписались.")
 # @dp.message_handler()
 # async def echo(message: types.message):
 #     await message.answer(message.text)
